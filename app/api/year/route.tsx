@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
-import { PostHog } from "posthog-node";
 import path from "path";
 import {
    getDayOfYear,
@@ -121,32 +120,7 @@ export async function GET(request: NextRequest) {
             ? layoutParam
             : "year";
 
-      // 4. Track with PostHog
-      const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
-         host:
-            process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-      });
-
-      // Capture wallpaper generation event
-      posthog.capture({
-         distinctId: request.headers.get("x-forwarded-for") || "anonymous",
-         event: "wallpaper_generated_api",
-         properties: {
-            calendar_type: "year",
-            width: width,
-            height: height,
-            theme: theme,
-            shape: shape,
-            accent: accent,
-            layout: layout,
-            format: format,
-            user_agent: request.headers.get("user-agent"),
-         },
-      });
-
-      await posthog.shutdown();
-
-      // 5. Calculate calendar data
+      // 4. Calculate calendar data
       const today = new Date();
       const dayOfYear = getDayOfYear(today);
       const startYear = new Date(startDate).getFullYear();
@@ -268,7 +242,7 @@ export async function GET(request: NextRequest) {
          // Status text at bottom - lifted up
          const textY = height - marginBottom * 1;
 
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -382,7 +356,7 @@ export async function GET(request: NextRequest) {
          const fontSize = Math.max(16, Math.min(32, height * 0.025));
          const textY = offsetY + gridHeight + fontSize * 5.5;
 
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -461,7 +435,7 @@ export async function GET(request: NextRequest) {
          const fontSize = Math.max(16, Math.min(32, height * 0.025));
          const textY = offsetY + gridHeight2 + fontSize * 5.5;
 
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -544,7 +518,7 @@ export async function GET(request: NextRequest) {
          const textY = offsetY + gridHeight + fontSize * 5.5;
 
          // 10. Generate SVG with sharpness attributes
-         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+         svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
            <rect width="100%" height="100%" fill="${colors.background}"/>
            ${shapes}
            <text
@@ -582,7 +556,7 @@ export async function GET(request: NextRequest) {
             defaultFontFamily: "Noto Sans",
          },
          dpi: 600, // Very high DPI for maximum sharpness (default is 96, was 300)
-         shapeRendering: 1, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
          textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
          imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });

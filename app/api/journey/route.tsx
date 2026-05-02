@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
-import { PostHog } from "posthog-node";
 import sharp from "sharp";
 import path from "path";
 import { isValidHexColor } from "@/lib/calendar";
@@ -201,33 +200,7 @@ export async function GET(request: NextRequest) {
          .slice(0, Math.min(2, destParts.length))
          .join(", ");
 
-      // 5. Track with PostHog
-      const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
-         host:
-            process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-      });
-
-      posthog.capture({
-         distinctId: request.headers.get("x-forwarded-for") || "anonymous",
-         event: "wallpaper_generated_api",
-         properties: {
-            calendar_type: "journey",
-            width: width,
-            height: height,
-            theme: theme,
-            shape: shape,
-            accent: accent,
-            zoom: zoomParam || "16",
-            format: format,
-            origin_location: originParam,
-            destination_location: destinationParam,
-            user_agent: request.headers.get("user-agent"),
-         },
-      });
-
-      await posthog.shutdown();
-
-      // 6. Determine which location to show based on date
+      // 5. Determine which location to show based on date
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Normalize to start of day
       targetDate.setHours(0, 0, 0, 0);
@@ -409,7 +382,7 @@ export async function GET(request: NextRequest) {
       `;
 
       // 15. Generate SVG with sharpness attributes
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
         <rect width="100%" height="100%" fill="${colors.background}"/>
         ${shapes}
         ${glassPill}
@@ -437,7 +410,7 @@ export async function GET(request: NextRequest) {
             defaultFontFamily: "Noto Sans",
          },
          dpi: 600, // Very high DPI for maximum sharpness (default is 96, was 300)
-         shapeRendering: 1, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
+         shapeRendering: 2, // 0 = optimizeSpeed, 1 = crispEdges, 2 = geometricPrecision
          textRendering: 2, // 0 = optimizeSpeed, 1 = optimizeLegibility, 2 = geometricPrecision
          imageRendering: 1, // 0 = optimizeSpeed, 1 = optimizeQuality
       });

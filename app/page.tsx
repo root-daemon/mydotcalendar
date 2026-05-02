@@ -114,20 +114,10 @@ export default function Home() {
          {/* Footer */}
          <footer className="border-t border-zinc-800 py-5">
             <div className="container mx-auto px-4 flex items-center justify-center gap-3 text-zinc-500 text-sm">
-               <p>
-                  Made by{" "}
-                  <a
-                     href="https://twitter.com/shivraj_roy10"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="text-zinc-400 hover:text-white transition-colors underline"
-                  >
-                     @shivraj_roy10
-                  </a>
-               </p>
+               <p>Made by root-daemon</p>
                <span className="text-[#ff6347] text-lg">.</span>
                <a
-                  href="https://github.com/shivraj-roy/mydotcalendar"
+                  href="https://github.com/root-daemon/mydotcalendar"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="relative group text-zinc-400 hover:text-white transition-colors"

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Instrument_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import { PostHogProvider } from "./providers";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -28,9 +27,9 @@ export const metadata: Metadata = {
       "life calendar",
       "minimal wallpaper",
    ],
-   authors: [{ name: "Shivraj Roy" }],
-   creator: "Shivraj Roy",
-   publisher: "Shivraj Roy",
+   authors: [{ name: "root-daemon" }],
+   creator: "root-daemon",
+   publisher: "root-daemon",
    metadataBase: new URL("https://www.dotcal.in"),
    alternates: {
       canonical: "/",
@@ -91,7 +90,7 @@ export const metadata: Metadata = {
       maximumScale: 1,
    },
    themeColor: [
-      { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+      { media: "(prefers-color-scheme: dark)", color: "#000000" },
       { media: "(prefers-color-scheme: light)", color: "#ffffff" },
    ],
 };
@@ -131,7 +130,7 @@ export default function RootLayout({
                `}
             </Script>
 
-            <PostHogProvider>{children}</PostHogProvider>
+            {children}
 
             <Analytics />
          </body>

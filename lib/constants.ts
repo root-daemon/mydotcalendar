@@ -21,7 +21,7 @@ export const DEVICE_RESOLUTIONS: Record<string, DeviceResolution> = {
  */
 export const DEFAULT_COLORS: Record<"dark" | "light", ThemeColors> = {
    dark: {
-      background: "#1a1a1a",
+      background: "#000000",
       passedDot: "#ffffff",
       currentDot: "#ff6347",
       futureDot: "#3a3a3a",

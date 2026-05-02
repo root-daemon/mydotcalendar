@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { Resvg } from "@resvg/resvg-js";
-import { PostHog } from "posthog-node";
 import path from "path";
 import { isValidDateFormat, isValidHexColor } from "@/lib/calendar";
 import {
@@ -110,28 +109,6 @@ export async function GET(request: NextRequest) {
 
       const format = formatParam === "svg" ? "svg" : "png";
 
-      // 3. Track with PostHog
-      const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY || "", {
-         host:
-            process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-      });
-
-      posthog.capture({
-         distinctId: request.headers.get("x-forwarded-for") || "anonymous",
-         event: "wallpaper_generated_api",
-         properties: {
-            calendar_type: "life",
-            width,
-            height,
-            theme,
-            shape,
-            accent,
-            format,
-            user_agent: request.headers.get("user-agent"),
-         },
-      });
-
-      await posthog.shutdown();
 
       // 4. Calculate life data
       const today = new Date();
@@ -214,7 +191,7 @@ export async function GET(request: NextRequest) {
       const textY =
          offsetY + gridHeight + (height - (offsetY + gridHeight)) / 2;
 
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="geometricPrecision">
         <rect width="100%" height="100%" fill="${colors.background}"/>
         ${shapes}
         <text
@@ -250,7 +227,7 @@ export async function GET(request: NextRequest) {
             defaultFontFamily: "Noto Sans",
          },
          dpi: 600,
-         shapeRendering: 1,
+         shapeRendering: 2,
          textRendering: 2,
          imageRendering: 1,
       });
